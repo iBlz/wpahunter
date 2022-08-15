@@ -234,7 +234,7 @@ if select == "4":
     os.system("clear")
     selectnet()
     rem()
-    os.system("/usr/bin/echo {} > mac.txt".format(bssid))
+    os.system("/usr/bin/echo {} > mac.txt".format(bssid.replace(":","")))
     print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.RED} Written bssid {Fore.WHITE}%s{Fore.RED} to mac.txt" % bssid)
     print("")
     print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.RED}Starting hcxdumptool")
