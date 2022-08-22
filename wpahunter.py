@@ -306,7 +306,7 @@ if select == "4":
         threading.Thread(target=hcxdumptool,args=[interface]).start()
         while True:
             time.sleep(2)
-            result = os.popen('c 2>/dev/null')
+            result = os.popen('tshark -r out.pcapng 2>/dev/null')
             if result.read().find("Message 2 of 4" or "Message 3 of 4" or "Message 4 of 4") !=-1:
                 print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.WHITE}PMKID Detected! Cracking and saving to {Fore.RED}cracked.txt{Fore.WHITE}...")
                 time.sleep(2)
