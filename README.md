@@ -35,5 +35,5 @@ python3 wpahunter.py
 ## Screenshot
 <h1 align="center">
   <br>
-  <img src="https://github.com/iBlz/wpahunter/blob/main/main.jpg"></a>
+  <img src="https://i.ibb.co/RGXg6Sp/main.jpg"></a>
 </h1>
