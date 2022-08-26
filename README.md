@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="https://github.com/iBlz/pibox-code/blob/main/logo.jpg"></a>
+  <img src="https://github.com/iBlz/wpahunter/blob/main/logo.jpg"></a>
 </h1>
 
 <h3 align="center">Wpa Hunter is a wireless network auditor with the lastest features</h3>
@@ -35,5 +35,5 @@ python3 wpahunter.py
 ## Screenshot
 <h1 align="center">
   <br>
-  <img src="https://github.com/iBlz/pibox-code/blob/main/main.jpg"></a>
+  <img src="https://github.com/iBlz/wpahunter/blob/main/main.jpg"></a>
 </h1>
