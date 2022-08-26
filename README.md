@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <img src="https://github.com/iBlz/wpahunter/blob/main/logo.jpg"></a>
+  <img src="https://i.ibb.co/Pcn49nw/logo.jpg"></a>
 </h1>
 
 <h3 align="center">Wpa Hunter is a wireless network auditor with the lastest features</h3>
