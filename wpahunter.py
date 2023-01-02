@@ -381,7 +381,7 @@ if select == "5":
     displaynet()
     displaycli()
     print("")
-    os.system("bash wfw.sh /root/out-01.csv")
+    os.system("bash wfw.sh {}/out-01.csv".format(os.getcwd()))
     rem()
 if select == "6":
     os.system("clear")
@@ -401,7 +401,7 @@ if select == "6":
     rem()
     os.system("airodump-ng --manufacturer --uptime --bssid %s -w out --output-format csv %s" % (bssid,interface))
     os.system("clear")
-    os.system("bash wfw.sh /root/out-01.csv")
+    os.system("bash wfw.sh {}/out-01.csv".format(os.getcwd()))
     rem()
 if select == "7":
     os.system("clear")
